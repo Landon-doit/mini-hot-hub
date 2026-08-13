@@ -1,11 +1,10 @@
-import type { HotPlatform } from '../types/hot';
-import hotMock from '../mock/hot.json';
 import HotCard from '../components/HotCard';
 import ErrorBoundary from '../components/ErrorBoundary';
-
-const platforms = hotMock as HotPlatform[];
+import { useHotList } from '../hooks/useHotList';
 
 function Home() {
+  const { loading, error, data, refetch } = useHotList();
+
   return (
     <div className="mx-auto max-w-[1200px] p-6">
       <header className="mb-6">
@@ -15,16 +14,69 @@ function Home() {
         </p>
       </header>
 
-      <main className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        {platforms.map((platform) => (
-          <ErrorBoundary key={platform.platform}>
-            <HotCard platform={platform} />
-          </ErrorBoundary>
-        ))}
-      </main>
+      {error ? (
+        <main className="flex flex-col items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white py-24 text-center dark:border-gray-800 dark:bg-gray-900">
+          <p className="m-0 text-sm text-gray-500 dark:text-gray-400">
+            该内容暂时无法加载
+          </p>
+          <button
+            type="button"
+            onClick={refetch}
+            className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            点击重试
+          </button>
+        </main>
+      ) : (
+        <main className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {loading
+            ? Array.from({ length: 6 }, (_, i) => <HotCard key={i} loading />)
+            : (data ?? []).map((platform) => (
+                <ErrorBoundary key={platform.platform}>
+                  <HotCard data={platform} loading={false} error={null} />
+                </ErrorBoundary>
+              ))}
+        </main>
+      )}
 
-      <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        学习演示项目，数据来自各平台公开榜单，仅供学习交流，非商用
+      {/* 页脚占位链接：上线前替换为真实 GitHub / 邮箱 / 隐私政策 / 用户协议地址 */}
+      <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs leading-6 text-gray-400 dark:border-gray-800 dark:text-gray-500">
+        <p className="m-0">今日热搜 © 2026 | 个人作品集项目</p>
+        <p className="m-0">数据来源：微博 · 知乎 · B站 · 抖音 · 百度 · 今日头条</p>
+        <p className="m-0">数据仅供参考，版权归原作者所有</p>
+        <p className="m-0">
+          GitHub:{' '}
+          <a
+            href="#"
+            className="text-gray-500 hover:text-brand-dark dark:text-gray-400 dark:hover:text-brand"
+          >
+            github.com/xxx/hot-search-aggregator
+          </a>
+        </p>
+        <p className="m-0">
+          联系方式：{' '}
+          <a
+            href="#"
+            className="text-gray-500 hover:text-brand-dark dark:text-gray-400 dark:hover:text-brand"
+          >
+            contact@example.com
+          </a>
+        </p>
+        <p className="m-0">
+          <a
+            href="#"
+            className="text-gray-500 hover:text-brand-dark dark:text-gray-400 dark:hover:text-brand"
+          >
+            隐私政策
+          </a>
+          {' / '}
+          <a
+            href="#"
+            className="text-gray-500 hover:text-brand-dark dark:text-gray-400 dark:hover:text-brand"
+          >
+            用户协议
+          </a>
+        </p>
       </footer>
     </div>
   );
