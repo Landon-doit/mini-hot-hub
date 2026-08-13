@@ -2,7 +2,8 @@
   {
     "platform": "weibo",
     "platformName": "微博",
-    "status": "ok",
+    "status": "degraded",
+    "isMock": true,
     "items": [
       {
         "id": "wb_1",
@@ -155,12 +156,13 @@
         "updatedAt": "2026-08-13T08:00:01Z"
       }
     ],
-    "error": null
+    "error": "本地 Mock 兜底（示例数据）"
   },
   {
     "platform": "zhihu",
     "platformName": "知乎",
-    "status": "ok",
+    "status": "degraded",
+    "isMock": true,
     "items": [
       {
         "id": "zh_1",
@@ -313,12 +315,13 @@
         "updatedAt": "2026-08-13T08:00:01Z"
       }
     ],
-    "error": null
+    "error": "本地 Mock 兜底（示例数据）"
   },
   {
     "platform": "bilibili",
     "platformName": "B站",
-    "status": "ok",
+    "status": "degraded",
+    "isMock": true,
     "items": [
       {
         "id": "bili_1",
@@ -471,6 +474,6 @@
         "updatedAt": "2026-08-13T08:00:01Z"
       }
     ],
-    "error": null
+    "error": "本地 Mock 兜底（示例数据）"
   }
 ]

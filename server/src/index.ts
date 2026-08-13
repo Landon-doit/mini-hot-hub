@@ -1,19 +1,47 @@
-import express from 'express';
-import cors from 'cors';
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-const app = express();
-const PORT = Number(process.env.PORT) || 3001;
+const app = new Hono();
+const PORT = Number(process.env.PORT) || 3000;
+
+// CORS 白名单仅限认证类 API；公开热搜 API 放行 `*`
+const AUTH_API_PREFIXES = ['/api/auth', '/api/user', '/api/recommend'] as const;
+const ALLOWED_ORIGINS = new Set([
+  'http://localhost:5173',
+  ...(process.env.CORS_ALLOWED_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+]);
 
 app.use(
+  '*',
   cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, c) => {
+      const isAuthApi = AUTH_API_PREFIXES.some((prefix) =>
+        c.req.path.startsWith(prefix),
+      );
+      if (isAuthApi) {
+        return ALLOWED_ORIGINS.has(origin) ? origin : undefined;
+      }
+      return '*';
+    },
   }),
 );
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true });
-});
+app.get('/api/health', (c) =>
+  c.json({
+    success: true,
+    data: {
+      overall: 'healthy',
+      platforms: {},
+      servedAt: new Date().toISOString(),
+    },
+    meta: {},
+  }),
+);
 
-app.listen(PORT, () => {
+serve({ fetch: app.fetch, port: PORT }, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

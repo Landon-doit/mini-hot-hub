@@ -34,6 +34,7 @@ export interface HotPlatform {
   platform: Platform;
   platformName: string;
   status: 'ok' | 'degraded';
+  isMock: boolean;
   items: HotItem[];
   error: string | null;
 }
