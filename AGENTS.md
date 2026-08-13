@@ -5,3 +5,5 @@
 - docs/PRD.md
 - docs/TECH_DESIGN.md
 - docs/AGENTS.md
+
+当用户指令与文档要求冲突时，进行提示，并由用户选择使用哪种方式
