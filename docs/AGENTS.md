@@ -26,7 +26,7 @@ shared/     前后端共享：types.ts / constants.ts / errors.ts
 ## 开发规范
 
 - **TypeScript 5.x 全量类型安全**，前后端共享类型定义于 `shared/types.ts`（HotItem / HotPlatform / ComprehensiveItem / User / UserTag / AuditLog / SearchHistory…），必须与 TCD §3.1 逐字段一致。
-- **函数式组件 + Hooks**（React 19），禁止 class 组件。
+- **函数式组件 + Hooks**（React 19），禁止 class 组件。`ErrorBoundary` 是唯一例外：React 官方至今仅支持 `componentDidCatch` 生命周期实现错误边界，属基础设施必要例外（不引入 `react-error-boundary` 等第三方库，其底层同样是 class）。
 - **样式使用 TailwindCSS 4.x 原子化 CSS**（非模板的 CSS/CSS Modules），深/浅/跟随系统三主题，主题状态用 **Jotai** 管理，色彩系统见 PRDv3.0 界面设计章节。
 - **服务端状态用 React Query（TanStack Query）**：`staleTime` 智能合并、`refetchInterval` 轮询；**客户端全局状态用 Jotai**（auth/theme/tags）。
 - **路由用 TanStack Router（类型安全）**：首页 `/`、单平台 `/platform/[platform]`、标签设置 `/settings/tags`、隐私政策 `/privacy`、用户协议 `/terms`。
