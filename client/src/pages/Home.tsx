@@ -10,7 +10,7 @@ function Home() {
   return (
     <div className="mx-auto max-w-[1200px] p-6">
       <header className="mb-6">
-        <h1 className="m-0 text-2xl font-bold text-brand">迷你今日热榜</h1>
+        <h1 className="m-0 text-2xl font-bold text-brand">时澜集观</h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           聚合微博、知乎、B站、抖音、百度、今日头条六大平台热搜，一屏速览全网热点
         </p>
@@ -49,7 +49,7 @@ function Home() {
 
       {/* 页脚占位链接：上线前替换为真实 GitHub / 邮箱 / 隐私政策 / 用户协议地址 */}
       <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs leading-6 text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <p className="m-0">今日热搜 © 2026 | 个人作品集项目</p>
+        <p className="m-0">时澜集观 © 2026 | 个人作品集项目</p>
         <p className="m-0">数据来源：微博 · 知乎 · B站 · 抖音 · 百度 · 今日头条</p>
         <p className="m-0">数据仅供参考，版权归原作者所有</p>
         <p className="m-0">
