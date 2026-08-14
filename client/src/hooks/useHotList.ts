@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { HotPlatform } from '../types/hot';
-// M1 接入后端后移除该 import，改用 api/hot.ts 的 fetchHotAggregate
-import hotMock from '../mock/hot.json';
+import type { HotPlatform, Platform } from '../types/hot';
+import { fetchHotPlatform } from '../api/hot';
 
-const MOCK_DATA = hotMock as HotPlatform[];
+const PLATFORMS: Platform[] = [
+  'weibo',
+  'zhihu',
+  'bilibili',
+  'douyin',
+  'baidu',
+  'toutiao',
+];
 
 export interface UseHotListResult {
   loading: boolean;
@@ -29,10 +35,9 @@ export function useHotList(): UseHotListResult {
       setLoading(true);
       setError(null);
       try {
-        // M1 后替换为：const list = await fetchHotAggregate();
-        // （fetchHotAggregate 内部已解析 Object.values(response.data) 并失败回退 mock）
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        const list: HotPlatform[] = MOCK_DATA;
+        // 逐平台拉取：微博走真实 /api/hot/weibo，未建端点的平台自动回退 Mock。
+        // 聚合端点 /api/hot/aggregate 尚未实现，暂不切 fetchAllHot()（省 6 次请求）。
+        const list = await Promise.all(PLATFORMS.map(fetchHotPlatform));
         if (!cancelled) {
           setData(list);
         }
