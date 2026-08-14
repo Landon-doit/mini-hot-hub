@@ -2,6 +2,8 @@ import HotCard from '../components/HotCard';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useHotList } from '../hooks/useHotList';
 
+const CARD_SHELL = 'snap-center shrink-0 w-[82%] md:w-auto md:shrink';
+
 function Home() {
   const { loading, error, data, refetch } = useHotList();
 
@@ -28,13 +30,19 @@ function Home() {
           </button>
         </main>
       ) : (
-        <main className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <main className="flex items-start gap-4 overflow-x-auto pb-2 snap-x scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:items-stretch md:overflow-visible md:snap-none">
           {loading
-            ? Array.from({ length: 6 }, (_, i) => <HotCard key={i} loading />)
+            ? Array.from({ length: 6 }, (_, i) => (
+                <div key={i} className={CARD_SHELL}>
+                  <HotCard loading />
+                </div>
+              ))
             : (data ?? []).map((platform) => (
-                <ErrorBoundary key={platform.platform}>
-                  <HotCard data={platform} loading={false} error={null} />
-                </ErrorBoundary>
+                <div key={platform.platform} className={CARD_SHELL}>
+                  <ErrorBoundary>
+                    <HotCard data={platform} loading={false} error={null} />
+                  </ErrorBoundary>
+                </div>
               ))}
         </main>
       )}

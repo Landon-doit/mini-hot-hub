@@ -55,7 +55,7 @@ function HotCardError({
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        className="min-h-[44px] rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         点击重试
       </button>
@@ -131,9 +131,9 @@ function HotCard({ loading = false, error = null, data, onRetry }: HotCardProps)
                 href={item.url}
                 target="_blank"
                 rel="noreferrer"
-                className="min-w-0 flex-1 truncate text-sm text-gray-900 hover:text-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand dark:text-gray-100 dark:hover:text-brand"
+                className="flex min-h-[44px] min-w-0 flex-1 items-center text-sm text-gray-900 hover:text-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand dark:text-gray-100 dark:hover:text-brand"
               >
-                {item.title}
+                <span className="min-w-0 truncate">{item.title}</span>
               </a>
               {item.hotValue.display && (
                 <span className="shrink-0 text-xs text-brand-dark dark:text-brand">
