@@ -2,13 +2,15 @@ import HotCard from '../components/HotCard';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useHotList } from '../hooks/useHotList';
 
+const CARD_SHELL = 'snap-center shrink-0 w-[82%] md:w-auto md:shrink';
+
 function Home() {
   const { loading, error, data, refetch } = useHotList();
 
   return (
     <div className="mx-auto max-w-[1200px] p-6">
       <header className="mb-6">
-        <h1 className="m-0 text-2xl font-bold text-brand">迷你今日热榜</h1>
+        <h1 className="m-0 text-2xl font-bold text-brand">时澜集观</h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
           聚合微博、知乎、B站、抖音、百度、今日头条六大平台热搜，一屏速览全网热点
         </p>
@@ -28,20 +30,26 @@ function Home() {
           </button>
         </main>
       ) : (
-        <main className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <main className="flex items-start gap-4 overflow-x-auto pb-2 snap-x scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:items-stretch md:overflow-visible md:snap-none">
           {loading
-            ? Array.from({ length: 6 }, (_, i) => <HotCard key={i} loading />)
+            ? Array.from({ length: 6 }, (_, i) => (
+                <div key={i} className={CARD_SHELL}>
+                  <HotCard loading />
+                </div>
+              ))
             : (data ?? []).map((platform) => (
-                <ErrorBoundary key={platform.platform}>
-                  <HotCard data={platform} loading={false} error={null} />
-                </ErrorBoundary>
+                <div key={platform.platform} className={CARD_SHELL}>
+                  <ErrorBoundary>
+                    <HotCard data={platform} loading={false} error={null} />
+                  </ErrorBoundary>
+                </div>
               ))}
         </main>
       )}
 
       {/* 页脚占位链接：上线前替换为真实 GitHub / 邮箱 / 隐私政策 / 用户协议地址 */}
       <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs leading-6 text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <p className="m-0">今日热搜 © 2026 | 个人作品集项目</p>
+        <p className="m-0">时澜集观 © 2026 | 个人作品集项目</p>
         <p className="m-0">数据来源：微博 · 知乎 · B站 · 抖音 · 百度 · 今日头条</p>
         <p className="m-0">数据仅供参考，版权归原作者所有</p>
         <p className="m-0">

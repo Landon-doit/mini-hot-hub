@@ -53,6 +53,34 @@ const MOCK_PATH = resolve(
 );
 const MOCK_PLATFORMS = JSON.parse(readFileSync(MOCK_PATH, 'utf8')) as HotPlatform[];
 
+// 平台白名单（与 client/src/types/hot.ts 的 Platform 类型一致），未知平台一律 404
+const PLATFORMS: Platform[] = [
+  'weibo',
+  'zhihu',
+  'bilibili',
+  'douyin',
+  'baidu',
+  'toutiao',
+];
+
+// 统一 mock 响应 meta（TCD §5.1 包络）
+const mockMeta = () => ({
+  source: 'mock',
+  cacheHit: false,
+  servedAt: new Date().toISOString(),
+});
+
+// 未知平台 404 错误体（错误码用裸名，待 M1 后端阶段集中到 shared/errors.ts）
+const notFoundError = () => ({
+  success: false,
+  error: {
+    code: 'NOT_FOUND',
+    message: '平台不存在',
+    traceId: randomUUID(),
+    retryable: false,
+  },
+});
+
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -96,31 +124,29 @@ app.get('/api/health', (c) =>
   }),
 );
 
-// 单平台热榜：对齐 TCD §5.2 的 /api/hot/{platform}，weibo 即 platform 值
-app.get('/api/hot/weibo', (c) => {
-  const weibo = MOCK_PLATFORMS.find((p) => p.platform === 'weibo');
-  if (!weibo) {
-    return c.json(
-      {
-        success: false,
-        error: {
-          code: 'HOT_UPSTREAM_FAILED',
-          message: '微博热搜数据暂不可用',
-          traceId: randomUUID(),
-          retryable: true,
-        },
-      },
-      502,
-    );
+// 聚合接口：一次返回六大平台（TCD §5.3.1 GET /api/hot/aggregate）
+app.get('/api/hot/aggregate', (c) =>
+  c.json({
+    success: true,
+    data: Object.fromEntries(MOCK_PLATFORMS.map((p) => [p.platform, p])),
+    meta: mockMeta(),
+  }),
+);
+
+// 单平台热榜：对齐 TCD §5.2 的 /api/hot/{platform}，未知平台一律 404
+app.get('/api/hot/:platform', (c) => {
+  const platform = c.req.param('platform');
+  if (!PLATFORMS.includes(platform as Platform)) {
+    return c.json(notFoundError(), 404);
+  }
+  const match = MOCK_PLATFORMS.find((p) => p.platform === platform);
+  if (!match) {
+    return c.json(notFoundError(), 404);
   }
   return c.json({
     success: true,
-    data: { weibo },
-    meta: {
-      source: 'mock',
-      cacheHit: false,
-      servedAt: new Date().toISOString(),
-    },
+    data: { [match.platform]: match },
+    meta: mockMeta(),
   });
 });
 

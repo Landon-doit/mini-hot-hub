@@ -1,15 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { HotPlatform, Platform } from '../types/hot';
-import { fetchHotPlatform } from '../api/hot';
-
-const PLATFORMS: Platform[] = [
-  'weibo',
-  'zhihu',
-  'bilibili',
-  'douyin',
-  'baidu',
-  'toutiao',
-];
+import type { HotPlatform } from '../types/hot';
+import { fetchAllHot } from '../api/hot';
 
 export interface UseHotListResult {
   loading: boolean;
@@ -35,9 +26,8 @@ export function useHotList(): UseHotListResult {
       setLoading(true);
       setError(null);
       try {
-        // 逐平台拉取：微博走真实 /api/hot/weibo，未建端点的平台自动回退 Mock。
-        // 聚合端点 /api/hot/aggregate 尚未实现，暂不切 fetchAllHot()（省 6 次请求）。
-        const list = await Promise.all(PLATFORMS.map(fetchHotPlatform));
+        // 统一走聚合端点一次拉全 6 平台；后端不可用时 fetchAllHot 内部回退本地 Mock（F4）
+        const list = await fetchAllHot();
         if (!cancelled) {
           setData(list);
         }
