@@ -1,4 +1,8 @@
-[
+import type { HotPlatform } from './types';
+
+// 六平台 Mock 数据（前后端共用，Mock 阶段不直连上游）
+// 由 client/src/mock/hot.json 迁移而来
+export const MOCK_PLATFORMS: HotPlatform[] = [
   {
     "platform": "weibo",
     "platformName": "微博",
@@ -11,10 +15,16 @@
         "rank": 1,
         "title": "某知名歌手官宣巡回演唱会",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 3200000, "display": "320万", "normalized": 100 },
+        "hotValue": {
+          "raw": 3200000,
+          "display": "320万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -26,10 +36,16 @@
         "rank": 2,
         "title": "全国多地发布高温红色预警",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 2800000, "display": "280万", "normalized": 88 },
+        "hotValue": {
+          "raw": 2800000,
+          "display": "280万",
+          "normalized": 88
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -41,10 +57,16 @@
         "rank": 3,
         "title": "国产大模型发布新一代版本",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 2500000, "display": "250万", "normalized": 78 },
+        "hotValue": {
+          "raw": 2500000,
+          "display": "250万",
+          "normalized": 78
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -56,10 +78,16 @@
         "rank": 4,
         "title": "央行宣布调整存款准备金率",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 2100000, "display": "210万", "normalized": 66 },
+        "hotValue": {
+          "raw": 2100000,
+          "display": "210万",
+          "normalized": 66
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -71,10 +99,16 @@
         "rank": 5,
         "title": "某城市马拉松赛事圆满落幕",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 1800000, "display": "180万", "normalized": 56 },
+        "hotValue": {
+          "raw": 1800000,
+          "display": "180万",
+          "normalized": 56
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -86,10 +120,16 @@
         "rank": 6,
         "title": "外交部回应最新国际局势",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 1600000, "display": "160万", "normalized": 50 },
+        "hotValue": {
+          "raw": 1600000,
+          "display": "160万",
+          "normalized": 50
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["diplomacy"],
+        "categories": [
+          "diplomacy"
+        ],
         "primaryCategory": "diplomacy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -101,10 +141,16 @@
         "rank": 7,
         "title": "新一轮惠民政策落地实施",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 1400000, "display": "140万", "normalized": 44 },
+        "hotValue": {
+          "raw": 1400000,
+          "display": "140万",
+          "normalized": 44
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -116,10 +162,16 @@
         "rank": 8,
         "title": "暑期档电影票房再创新高",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 1200000, "display": "120万", "normalized": 38 },
+        "hotValue": {
+          "raw": 1200000,
+          "display": "120万",
+          "normalized": 38
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -131,10 +183,16 @@
         "rank": 9,
         "title": "高校录取分数线陆续公布",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 1000000, "display": "100万", "normalized": 31 },
+        "hotValue": {
+          "raw": 1000000,
+          "display": "100万",
+          "normalized": 31
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -146,10 +204,16 @@
         "rank": 10,
         "title": "科技公司发布折叠屏新品",
         "url": "https://s.weibo.com/top/summary?cate=realtimehot",
-        "hotValue": { "raw": 800000, "display": "80万", "normalized": 25 },
+        "hotValue": {
+          "raw": 800000,
+          "display": "80万",
+          "normalized": 25
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -170,10 +234,16 @@
         "rank": 1,
         "title": "如何看待本轮 AI 技术浪潮",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 1800000, "display": "180万", "normalized": 100 },
+        "hotValue": {
+          "raw": 1800000,
+          "display": "180万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -185,10 +255,16 @@
         "rank": 2,
         "title": "有哪些值得推荐的夏日旅行地",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 1500000, "display": "150万", "normalized": 83 },
+        "hotValue": {
+          "raw": 1500000,
+          "display": "150万",
+          "normalized": 83
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -200,10 +276,16 @@
         "rank": 3,
         "title": "如何理解最新的经济政策",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 1300000, "display": "130万", "normalized": 72 },
+        "hotValue": {
+          "raw": 1300000,
+          "display": "130万",
+          "normalized": 72
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -215,10 +297,16 @@
         "rank": 4,
         "title": "读书带来的长期价值是什么",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 1100000, "display": "110万", "normalized": 61 },
+        "hotValue": {
+          "raw": 1100000,
+          "display": "110万",
+          "normalized": 61
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -230,10 +318,16 @@
         "rank": 5,
         "title": "普通人如何提升职业竞争力",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 950000, "display": "95万", "normalized": 53 },
+        "hotValue": {
+          "raw": 950000,
+          "display": "95万",
+          "normalized": 53
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -245,10 +339,16 @@
         "rank": 6,
         "title": "有哪些高质量的运动习惯",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 800000, "display": "80万", "normalized": 44 },
+        "hotValue": {
+          "raw": 800000,
+          "display": "80万",
+          "normalized": 44
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -260,10 +360,16 @@
         "rank": 7,
         "title": "如何看待国际关系新变化",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 700000, "display": "70万", "normalized": 39 },
+        "hotValue": {
+          "raw": 700000,
+          "display": "70万",
+          "normalized": 39
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["diplomacy"],
+        "categories": [
+          "diplomacy"
+        ],
         "primaryCategory": "diplomacy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -275,10 +381,16 @@
         "rank": 8,
         "title": "如何高效学习一门新技能",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 600000, "display": "60万", "normalized": 33 },
+        "hotValue": {
+          "raw": 600000,
+          "display": "60万",
+          "normalized": 33
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -290,10 +402,16 @@
         "rank": 9,
         "title": "有哪些值得关注的新政策",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 500000, "display": "50万", "normalized": 28 },
+        "hotValue": {
+          "raw": 500000,
+          "display": "50万",
+          "normalized": 28
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -305,10 +423,16 @@
         "rank": 10,
         "title": "什么是真正的长期主义",
         "url": "https://www.zhihu.com/hot",
-        "hotValue": { "raw": 400000, "display": "40万", "normalized": 22 },
+        "hotValue": {
+          "raw": 400000,
+          "display": "40万",
+          "normalized": 22
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -329,10 +453,16 @@
         "rank": 1,
         "title": "全网首测新一代旗舰手机",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 2600000, "display": "260万", "normalized": 100 },
+        "hotValue": {
+          "raw": 2600000,
+          "display": "260万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -344,10 +474,16 @@
         "rank": 2,
         "title": "硬核解析：AI 是如何工作的",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 2200000, "display": "220万", "normalized": 85 },
+        "hotValue": {
+          "raw": 2200000,
+          "display": "220万",
+          "normalized": 85
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -359,10 +495,16 @@
         "rank": 3,
         "title": "美食探店：隐藏的宝藏小店",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 1900000, "display": "190万", "normalized": 73 },
+        "hotValue": {
+          "raw": 1900000,
+          "display": "190万",
+          "normalized": 73
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -374,10 +516,16 @@
         "rank": 4,
         "title": "运动挑战：30 天健身计划",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 1600000, "display": "160万", "normalized": 62 },
+        "hotValue": {
+          "raw": 1600000,
+          "display": "160万",
+          "normalized": 62
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -389,10 +537,16 @@
         "rank": 5,
         "title": "热门游戏速通挑战",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 1400000, "display": "140万", "normalized": 54 },
+        "hotValue": {
+          "raw": 1400000,
+          "display": "140万",
+          "normalized": 54
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -404,10 +558,16 @@
         "rank": 6,
         "title": "财经解读：普通人如何理财",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 1200000, "display": "120万", "normalized": 46 },
+        "hotValue": {
+          "raw": 1200000,
+          "display": "120万",
+          "normalized": 46
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -419,10 +579,16 @@
         "rank": 7,
         "title": "纪录片：城市的一天",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 1000000, "display": "100万", "normalized": 38 },
+        "hotValue": {
+          "raw": 1000000,
+          "display": "100万",
+          "normalized": 38
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -434,10 +600,16 @@
         "rank": 8,
         "title": "手工教程：自制木工家具",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 900000, "display": "90万", "normalized": 35 },
+        "hotValue": {
+          "raw": 900000,
+          "display": "90万",
+          "normalized": 35
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -449,10 +621,16 @@
         "rank": 9,
         "title": "科普：太空探索最新进展",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 800000, "display": "80万", "normalized": 31 },
+        "hotValue": {
+          "raw": 800000,
+          "display": "80万",
+          "normalized": 31
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -464,10 +642,16 @@
         "rank": 10,
         "title": "生活 Vlog：我的周末日常",
         "url": "https://www.bilibili.com/v/popular/rank/all",
-        "hotValue": { "raw": 700000, "display": "70万", "normalized": 27 },
+        "hotValue": {
+          "raw": 700000,
+          "display": "70万",
+          "normalized": 27
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -488,10 +672,16 @@
         "rank": 1,
         "title": "热门舞蹈挑战引爆全网",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 2400000, "display": "240万", "normalized": 100 },
+        "hotValue": {
+          "raw": 2400000,
+          "display": "240万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -503,10 +693,16 @@
         "rank": 2,
         "title": "某地夜市小吃一夜走红",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 2000000, "display": "200万", "normalized": 83 },
+        "hotValue": {
+          "raw": 2000000,
+          "display": "200万",
+          "normalized": 83
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -518,10 +714,16 @@
         "rank": 3,
         "title": "旅行博主探访小众秘境",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 1750000, "display": "175万", "normalized": 73 },
+        "hotValue": {
+          "raw": 1750000,
+          "display": "175万",
+          "normalized": 73
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -533,10 +735,16 @@
         "rank": 4,
         "title": "萌宠治愈视频获千万点赞",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 1500000, "display": "150万", "normalized": 63 },
+        "hotValue": {
+          "raw": 1500000,
+          "display": "150万",
+          "normalized": 63
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -548,10 +756,16 @@
         "rank": 5,
         "title": "街头艺人绝活惊艳路人",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 1300000, "display": "130万", "normalized": 54 },
+        "hotValue": {
+          "raw": 1300000,
+          "display": "130万",
+          "normalized": 54
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -563,10 +777,16 @@
         "rank": 6,
         "title": "家庭快手菜教程走红",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 1100000, "display": "110万", "normalized": 46 },
+        "hotValue": {
+          "raw": 1100000,
+          "display": "110万",
+          "normalized": 46
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -578,10 +798,16 @@
         "rank": 7,
         "title": "晨跑打卡挑战进行中",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 900000, "display": "90万", "normalized": 38 },
+        "hotValue": {
+          "raw": 900000,
+          "display": "90万",
+          "normalized": 38
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -593,10 +819,16 @@
         "rank": 8,
         "title": "亲子互动温馨瞬间刷屏",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 750000, "display": "75万", "normalized": 31 },
+        "hotValue": {
+          "raw": 750000,
+          "display": "75万",
+          "normalized": 31
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -608,10 +840,16 @@
         "rank": 9,
         "title": "城市夜景航拍大片",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 600000, "display": "60万", "normalized": 25 },
+        "hotValue": {
+          "raw": 600000,
+          "display": "60万",
+          "normalized": 25
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -623,10 +861,16 @@
         "rank": 10,
         "title": "手工创意改造分享",
         "url": "https://www.douyin.com/hot",
-        "hotValue": { "raw": 500000, "display": "50万", "normalized": 21 },
+        "hotValue": {
+          "raw": 500000,
+          "display": "50万",
+          "normalized": 21
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -647,10 +891,16 @@
         "rank": 1,
         "title": "全国多地暴雨预警升级",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 3000000, "display": "300万", "normalized": 100 },
+        "hotValue": {
+          "raw": 3000000,
+          "display": "300万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -662,10 +912,16 @@
         "rank": 2,
         "title": "新能源汽车销量再创新高",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 2600000, "display": "260万", "normalized": 87 },
+        "hotValue": {
+          "raw": 2600000,
+          "display": "260万",
+          "normalized": 87
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -677,10 +933,16 @@
         "rank": 3,
         "title": "航天员完成舱外任务",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 2200000, "display": "220万", "normalized": 73 },
+        "hotValue": {
+          "raw": 2200000,
+          "display": "220万",
+          "normalized": 73
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -692,10 +954,16 @@
         "rank": 4,
         "title": "国足世预赛关键战役",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 1900000, "display": "190万", "normalized": 63 },
+        "hotValue": {
+          "raw": 1900000,
+          "display": "190万",
+          "normalized": 63
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -707,10 +975,16 @@
         "rank": 5,
         "title": "医保改革新政落地",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 1600000, "display": "160万", "normalized": 53 },
+        "hotValue": {
+          "raw": 1600000,
+          "display": "160万",
+          "normalized": 53
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -722,10 +996,16 @@
         "rank": 6,
         "title": "某地发生地震已启动应急",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 1400000, "display": "140万", "normalized": 47 },
+        "hotValue": {
+          "raw": 1400000,
+          "display": "140万",
+          "normalized": 47
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -737,10 +1017,16 @@
         "rank": 7,
         "title": "国际油价大幅波动",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 1200000, "display": "120万", "normalized": 40 },
+        "hotValue": {
+          "raw": 1200000,
+          "display": "120万",
+          "normalized": 40
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -752,10 +1038,16 @@
         "rank": 8,
         "title": "高考成绩查询通道开启",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 1000000, "display": "100万", "normalized": 33 },
+        "hotValue": {
+          "raw": 1000000,
+          "display": "100万",
+          "normalized": 33
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -767,10 +1059,16 @@
         "rank": 9,
         "title": "考古新发现引发学界关注",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 800000, "display": "80万", "normalized": 27 },
+        "hotValue": {
+          "raw": 800000,
+          "display": "80万",
+          "normalized": 27
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -782,10 +1080,16 @@
         "rank": 10,
         "title": "秋季开学准备工作部署",
         "url": "https://top.baidu.com/board?tab=realtime",
-        "hotValue": { "raw": 650000, "display": "65万", "normalized": 22 },
+        "hotValue": {
+          "raw": 650000,
+          "display": "65万",
+          "normalized": 22
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -806,10 +1110,16 @@
         "rank": 1,
         "title": "国产芯片取得关键技术突破",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 2700000, "display": "270万", "normalized": 100 },
+        "hotValue": {
+          "raw": 2700000,
+          "display": "270万",
+          "normalized": 100
+        },
         "label": "爆",
         "heatLevel": "explosive",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -821,10 +1131,16 @@
         "rank": 2,
         "title": "城市更新三年规划发布",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 2300000, "display": "230万", "normalized": 85 },
+        "hotValue": {
+          "raw": 2300000,
+          "display": "230万",
+          "normalized": 85
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -836,10 +1152,16 @@
         "rank": 3,
         "title": "股市午后震荡走高",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 2000000, "display": "200万", "normalized": 74 },
+        "hotValue": {
+          "raw": 2000000,
+          "display": "200万",
+          "normalized": 74
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -851,10 +1173,16 @@
         "rank": 4,
         "title": "世界杯预选赛最新战报",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 1700000, "display": "170万", "normalized": 63 },
+        "hotValue": {
+          "raw": 1700000,
+          "display": "170万",
+          "normalized": 63
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["sports"],
+        "categories": [
+          "sports"
+        ],
         "primaryCategory": "sports",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -866,10 +1194,16 @@
         "rank": 5,
         "title": "科学家揭示新物理现象",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 1450000, "display": "145万", "normalized": 54 },
+        "hotValue": {
+          "raw": 1450000,
+          "display": "145万",
+          "normalized": 54
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["tech"],
+        "categories": [
+          "tech"
+        ],
         "primaryCategory": "tech",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -881,10 +1215,16 @@
         "rank": 6,
         "title": "各地文旅活动持续火爆",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 1250000, "display": "125万", "normalized": 46 },
+        "hotValue": {
+          "raw": 1250000,
+          "display": "125万",
+          "normalized": 46
+        },
         "label": "热",
         "heatLevel": "hot",
-        "categories": ["culture"],
+        "categories": [
+          "culture"
+        ],
         "primaryCategory": "culture",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -896,10 +1236,16 @@
         "rank": 7,
         "title": "反诈宣传进社区活动",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 1050000, "display": "105万", "normalized": 39 },
+        "hotValue": {
+          "raw": 1050000,
+          "display": "105万",
+          "normalized": 39
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -911,10 +1257,16 @@
         "rank": 8,
         "title": "新能源产业政策解读",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 850000, "display": "85万", "normalized": 31 },
+        "hotValue": {
+          "raw": 850000,
+          "display": "85万",
+          "normalized": 31
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["policy"],
+        "categories": [
+          "policy"
+        ],
         "primaryCategory": "policy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -926,10 +1278,16 @@
         "rank": 9,
         "title": "秋季开学准备指南发布",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 700000, "display": "70万", "normalized": 26 },
+        "hotValue": {
+          "raw": 700000,
+          "display": "70万",
+          "normalized": 26
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["livelihood"],
+        "categories": [
+          "livelihood"
+        ],
         "primaryCategory": "livelihood",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -941,10 +1299,16 @@
         "rank": 10,
         "title": "数字经济发展报告出炉",
         "url": "https://www.toutiao.com/hot/",
-        "hotValue": { "raw": 550000, "display": "55万", "normalized": 20 },
+        "hotValue": {
+          "raw": 550000,
+          "display": "55万",
+          "normalized": 20
+        },
         "label": null,
         "heatLevel": "normal",
-        "categories": ["economy"],
+        "categories": [
+          "economy"
+        ],
         "primaryCategory": "economy",
         "isMock": true,
         "fetchedAt": "2026-08-13T08:00:00Z",
@@ -953,4 +1317,4 @@
     ],
     "error": "本地 Mock 兜底（示例数据）"
   }
-]
+];

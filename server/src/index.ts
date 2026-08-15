@@ -2,84 +2,7 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
-import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-// --- 类型定义（对齐 TCD §3.1，与 client/src/types/hot.ts 保持同构） ---
-type Platform = 'weibo' | 'zhihu' | 'bilibili' | 'douyin' | 'baidu' | 'toutiao';
-
-interface HotValue {
-  raw: number;
-  display: string;
-  normalized: number;
-}
-
-type HeatLevel = 'normal' | 'hot' | 'explosive';
-
-interface HotItem {
-  id: string;
-  platform: Platform;
-  rank: number;
-  title: string;
-  url: string;
-  hotValue: HotValue;
-  label: string | null;
-  heatLevel: HeatLevel;
-  categories: string[];
-  primaryCategory: string | null;
-  description?: string;
-  imageUrl?: string;
-  isMock: boolean;
-  fetchedAt: string;
-  updatedAt: string;
-}
-
-interface HotPlatform {
-  platform: Platform;
-  platformName: string;
-  status: 'ok' | 'degraded';
-  isMock: boolean;
-  items: HotItem[];
-  error: string | null;
-}
-
-// 统一 mock 源：读取前端共享的 hot.json，避免后端硬编码导致字段漂移。
-// 相对本文件解析；dev（src/）与 build（dist/）下本文件均为 server 的下一级目录。
-const MOCK_PATH = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  '../../client/src/mock/hot.json',
-);
-const MOCK_PLATFORMS = JSON.parse(readFileSync(MOCK_PATH, 'utf8')) as HotPlatform[];
-
-// 平台白名单（与 client/src/types/hot.ts 的 Platform 类型一致），未知平台一律 404
-const PLATFORMS: Platform[] = [
-  'weibo',
-  'zhihu',
-  'bilibili',
-  'douyin',
-  'baidu',
-  'toutiao',
-];
-
-// 统一 mock 响应 meta（TCD §5.1 包络）
-const mockMeta = () => ({
-  source: 'mock',
-  cacheHit: false,
-  servedAt: new Date().toISOString(),
-});
-
-// 未知平台 404 错误体（错误码用裸名，待 M1 后端阶段集中到 shared/errors.ts）
-const notFoundError = () => ({
-  success: false,
-  error: {
-    code: 'NOT_FOUND',
-    message: '平台不存在',
-    traceId: randomUUID(),
-    retryable: false,
-  },
-});
+import { hot } from './routes/hot';
 
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 3000;
@@ -124,31 +47,7 @@ app.get('/api/health', (c) =>
   }),
 );
 
-// 聚合接口：一次返回六大平台（TCD §5.3.1 GET /api/hot/aggregate）
-app.get('/api/hot/aggregate', (c) =>
-  c.json({
-    success: true,
-    data: Object.fromEntries(MOCK_PLATFORMS.map((p) => [p.platform, p])),
-    meta: mockMeta(),
-  }),
-);
-
-// 单平台热榜：对齐 TCD §5.2 的 /api/hot/{platform}，未知平台一律 404
-app.get('/api/hot/:platform', (c) => {
-  const platform = c.req.param('platform');
-  if (!PLATFORMS.includes(platform as Platform)) {
-    return c.json(notFoundError(), 404);
-  }
-  const match = MOCK_PLATFORMS.find((p) => p.platform === platform);
-  if (!match) {
-    return c.json(notFoundError(), 404);
-  }
-  return c.json({
-    success: true,
-    data: { [match.platform]: match },
-    meta: mockMeta(),
-  });
-});
+app.route('/api/hot', hot);
 
 serve({ fetch: app.fetch, port: PORT }, () => {
   console.log(`Server running at http://localhost:${PORT}`);

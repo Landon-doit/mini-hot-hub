@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.0",
-    "hono": "^4.13.1"
+    "hono": "^4.13.1",
+    "segmentit": "^2.0.3"
   }
 }

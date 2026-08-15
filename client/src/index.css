@@ -2,24 +2,56 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --color-brand: #ff6b35;
-  --color-brand-dark: #d4520a;
-}
-
+/* 主题色板：浅色为默认（严格按 PRD 色彩系统） */
 :root {
+  --color-background: #ffffff;
+  --color-card: #f8f9fa;
+  --color-border: #e0e0e0;
+  --color-foreground: #1a1a2e;
+  --color-muted: #666666;
+  --color-accent: #ffd23f;
+  --color-brand: #ff6b35;
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-danger: #f44336;
+
   font-family: system-ui, -apple-system, 'Segoe UI', 'PingFang SC',
     'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
+/* 深色主题（.dark 加在 <html> 上） */
+.dark {
+  --color-background: #1a1a2e;
+  --color-card: #16213e;
+  --color-border: #2a2a4a;
+  --color-foreground: #e0e0e0;
+  --color-muted: #a0a0a0;
+  --color-accent: #ffd23f;
+  --color-brand: #ff6b35;
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-danger: #f44336;
+}
+
+/* 语义变量映射为 Tailwind 颜色 token；inline 使工具类直接引用变量，随 .dark 切换 */
+@theme inline {
+  --color-background: var(--color-background);
+  --color-card: var(--color-card);
+  --color-border: var(--color-border);
+  --color-foreground: var(--color-foreground);
+  --color-muted: var(--color-muted);
+  --color-accent: var(--color-accent);
+  --color-brand: var(--color-brand);
+  --color-brand-dark: #d4520a;
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-danger: var(--color-danger);
+}
+
 body {
-  @apply m-0 bg-gray-100 text-gray-900 antialiased;
+  @apply m-0 bg-background text-foreground antialiased;
 }
 
 #root {
   @apply min-h-screen;
-}
-
-.dark body {
-  @apply bg-gray-950 text-gray-100;
 }
