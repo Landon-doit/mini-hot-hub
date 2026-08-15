@@ -1,5 +1,6 @@
-import type { HotPlatform } from '../types/hot';
-import { formatUpdatedAt, latestUpdatedAt } from '../lib/format';
+import type { HotItem, HotPlatform } from '../types/hot';
+import { formatRelativeTime, latestUpdatedAt } from '../lib/format';
+import { PLATFORM_COLORS } from '@shared/constants';
 
 interface HotCardProps {
   loading?: boolean;
@@ -19,6 +20,17 @@ function rankClass(rank: number): string {
     return 'w-6 shrink-0 text-center text-sm font-semibold text-[#D4520A] dark:text-[#FF6B35]';
   }
   return 'w-6 shrink-0 text-center text-sm font-normal text-gray-400 dark:text-gray-500';
+}
+
+// 热度标签：复用 label/heatLevel 字段，「爆」用强调色、「热」用品牌色
+function heatLabel(
+  item: HotItem,
+): { text: string; className: string } | null {
+  if (item.heatLevel === 'normal') return null;
+  const text = item.label ?? (item.heatLevel === 'explosive' ? '爆' : '热');
+  const className =
+    item.heatLevel === 'explosive' ? 'text-accent' : 'text-brand';
+  return { text, className };
 }
 
 function HotCardSkeleton() {
@@ -100,6 +112,7 @@ function HotCard({ loading = false, error = null, data, onRetry }: HotCardProps)
   const degraded = data.status === 'degraded';
   const updatedAt = latestUpdatedAt(data.items);
   const isEmpty = data.items.length === 0;
+  const platformColor = PLATFORM_COLORS[data.platform] ?? '#888888';
 
   return (
     <article
@@ -121,38 +134,74 @@ function HotCard({ loading = false, error = null, data, onRetry }: HotCardProps)
         <HotCardEmpty />
       ) : (
         <ol className="m-0 flex-1 list-none space-y-1 p-0">
-          {data.items.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-center gap-2 border-b border-gray-100 py-1.5 last:border-none dark:border-gray-800"
-            >
-              <span className={rankClass(item.rank)}>{item.rank}</span>
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex min-h-[44px] min-w-0 flex-1 items-center text-sm text-gray-900 hover:text-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand dark:text-gray-100 dark:hover:text-brand"
+          {data.items.map((item) => {
+            const label = heatLabel(item);
+            const pct = Math.max(0, Math.min(100, item.hotValue.normalized));
+            return (
+              <li
+                key={item.id}
+                className="border-b border-gray-100 py-1.5 last:border-none dark:border-gray-800"
               >
-                <span className="min-w-0 truncate">{item.title}</span>
-              </a>
-              {item.hotValue.display && (
-                <span className="shrink-0 text-xs text-brand-dark dark:text-brand">
-                  {item.hotValue.display}
-                </span>
-              )}
-            </li>
-          ))}
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full"
+                    style={{ backgroundColor: platformColor }}
+                    aria-hidden="true"
+                  />
+                  <span className={rankClass(item.rank)}>{item.rank}</span>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`${data.platformName}第${item.rank}名：${item.title}，热度${item.hotValue.display}`}
+                    className="flex min-h-[44px] min-w-0 flex-1 items-center text-sm text-gray-900 hover:text-brand-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand dark:text-gray-100 dark:hover:text-brand"
+                  >
+                    <span className="min-w-0 truncate">{item.title}</span>
+                  </a>
+                  {label && (
+                    <span
+                      className={`shrink-0 text-xs font-semibold ${label.className}`}
+                    >
+                      {label.text}
+                    </span>
+                  )}
+                  {item.hotValue.display && (
+                    <span className="shrink-0 text-xs text-brand-dark dark:text-brand">
+                      {item.hotValue.display}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                  <div
+                    className="h-full rounded-full bg-brand"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ol>
       )}
 
       {!isEmpty && (
-        <footer className="mt-3 border-t border-gray-100 pt-2 text-xs text-gray-500 dark:border-gray-800 dark:text-gray-400">
-          {updatedAt && <p className="m-0">{formatUpdatedAt(updatedAt)}</p>}
-          {degraded && (
-            <p role="alert" className="m-0">
-              {data.error ?? '数据已降级，展示缓存或示例数据'}
-            </p>
-          )}
+        <footer className="mt-3 flex items-center justify-between gap-2 border-t border-gray-100 pt-2 text-xs dark:border-gray-800">
+          <div className="min-w-0 text-gray-500 dark:text-gray-400">
+            {updatedAt && (
+              <p className="m-0">{formatRelativeTime(updatedAt)}</p>
+            )}
+            {degraded && (
+              <p role="alert" className="m-0">
+                {data.error ?? '数据已降级，展示缓存或示例数据'}
+              </p>
+            )}
+          </div>
+          <a
+            href={`/platform/${data.platform}`}
+            aria-label={`查看${data.platformName}完整榜单`}
+            className="inline-flex min-h-[44px] shrink-0 items-center text-brand-dark transition-colors hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand dark:text-brand"
+          >
+            查看更多
+          </a>
         </footer>
       )}
     </article>

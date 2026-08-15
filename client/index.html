@@ -3,6 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // 首屏渲染前同步设置主题，避免主题闪烁（FOUC）
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var mode = 'dark';
+          if (stored) {
+            try {
+              mode = JSON.parse(stored);
+            } catch (e) {
+              mode = stored;
+            }
+          }
+          var dark =
+            mode === 'dark' ||
+            (mode === 'system' &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <title>时澜集观</title>
   </head>
   <body>

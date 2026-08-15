@@ -1,7 +1,7 @@
-import type { HotPlatform, Platform } from '../types/hot';
-import hotMock from '../mock/hot.json';
+import type { ComprehensiveItem, HotPlatform, Platform } from '../types/hot';
+import { MOCK_PLATFORMS } from '@shared/mock-data';
 
-const MOCK = hotMock as HotPlatform[];
+const MOCK = MOCK_PLATFORMS;
 
 // dev 下 VITE_API_BASE 为空，走相对路径 + vite proxy；生产分域部署时填真实 API 域名
 const BASE = import.meta.env.VITE_API_BASE ?? '';
@@ -51,4 +51,22 @@ function fallback(source: Platform): HotPlatform {
     throw new Error(`未知平台：${source}`);
   }
   return mock;
+}
+
+/**
+ * 拉取跨平台综合热榜（TCD §5.3.1 GET /api/hot/comprehensive）。
+ * 成功返回 body.data.items；失败直接抛错交由 React Query 进入 error 态
+ * （综合热榜需中文分词合并，客户端无等价 Mock，不做本地兜底）。
+ */
+export async function fetchComprehensive(): Promise<ComprehensiveItem[]> {
+  const res = await fetch(`${BASE}/api/hot/comprehensive`);
+  if (!res.ok) {
+    throw new Error(`综合热榜请求失败（HTTP ${res.status}）`);
+  }
+  const body = await res.json();
+  const items = body?.data?.items;
+  if (!Array.isArray(items)) {
+    throw new Error('综合热榜响应格式异常');
+  }
+  return items as ComprehensiveItem[];
 }
