@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
 import ThemeToggle from './ThemeToggle';
+import { BRAND } from '../constants/brand';
 
 interface TopNavProps {
   refetch: () => void;
@@ -124,8 +125,12 @@ function TopNav({ refetch, loading }: TopNavProps) {
     <header className="sticky top-0 z-40 border-b border-border bg-background">
       <nav className="mx-auto flex max-w-[1200px] items-center gap-3 p-4" aria-label="主导航">
         {/* Logo */}
-        <a href="/" className="flex items-center">
-          <h1 className="m-0 text-2xl font-bold text-brand">时澜集观</h1>
+        <a href="/" className="flex items-center gap-2">
+          <img src={BRAND.logo} alt="Timelune" width={36} height={36} className="rounded-md" />
+          <div>
+            <h1 className="m-0 text-2xl font-bold leading-none text-brand">{BRAND.name}</h1>
+            <span className="text-xs tracking-wide text-muted">{BRAND.nameEn}</span>
+          </div>
         </a>
 
         {/* 桌面搜索框 */}

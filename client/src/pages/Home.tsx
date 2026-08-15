@@ -6,6 +6,7 @@ import ComprehensiveBoard from '../components/ComprehensiveBoard';
 import HotCard from '../components/HotCard';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { useHotAggregate } from '../hooks/useHotAggregate';
+import { BRAND } from '../constants/brand';
 
 const CARD_SHELL = 'snap-center shrink-0 w-[82%] md:w-auto md:shrink';
 
@@ -57,7 +58,7 @@ function Home() {
 
       {/* ⑦ 页脚 */}
       <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs leading-6 text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <p className="m-0">时澜集观 © 2026 | 学习项目，非商用</p>
+        <p className="m-0">{BRAND.name} {BRAND.nameEn} © 2026 | 学习项目，非商用</p>
         <p className="m-0">数据来源：微博 · 知乎 · B站 · 抖音 · 百度 · 今日头条</p>
         <p className="m-0">数据仅供参考，版权归原作者所有</p>
       </footer>

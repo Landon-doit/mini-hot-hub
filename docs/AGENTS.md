@@ -1,4 +1,4 @@
-# 今日热搜·开发指令
+# 时澜集观·开发指令
 
 > 本文件是给 AI 编程 Agent 的实现指令。所有技术决策以 **`TCD.md`** 为准，本文件不重复定义，只把 TCD 拆成可执行的编码规范与验收点。
 > **栈冲突说明**：你提供的模板用 Node.js+Express+React+CSS/CSS Modules（简化学习栈）；经确认按「**TCD 为准**」编写。但 TCD 已于 2026-08-12 因 **Cloudflare 无中国大陆节点、国内访问受限** 从 Cloudflare 栈切换为**国内栈**（详见 TCD §1 选型说明）：前端 React19+Tailwind 不变；后端改 **Node.js 服务端（Hono，部署在国内轻量服务器）**；存储 D1→**SQLite**、KV→**Redis**、R2→**OSS/COS**；缓存四级 L1–L4（L3 进程内 LRU、L4 Redis）、数据源降级 F1–F4 不变。模板中 Express/内存缓存/CSS Modules/CACHE_TTL 等项**一律以 TCD（国内栈版）为准**，下文已逐条标注。
