@@ -23,6 +23,14 @@ shared/     前后端共享：types.ts / constants.ts / errors.ts
 
 ---
 
+## 实现偏差记录
+
+- 路由库：文档原定 TanStack Router，实际实现采用 **react-router-dom v7**（功能等价、已落地验证）。
+  原因：落地阶段为快速打通路由改用 react-router-dom；API 形态一致，后续如需类型安全路由树可平滑迁移。
+  影响范围：仅前端路由层；不影响接口契约、数据层、UI 行为。
+
+---
+
 ## 开发规范
 
 - **TypeScript 5.x 全量类型安全**，前后端共享类型定义于 `shared/types.ts`（HotItem / HotPlatform / ComprehensiveItem / User / UserTag / AuditLog / SearchHistory…），必须与 TCD §3.1 逐字段一致。

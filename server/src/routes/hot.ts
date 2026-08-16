@@ -4,6 +4,7 @@ import segmentit from 'segmentit';
 import { MOCK_PLATFORMS } from '@shared/mock-data';
 import type { ComprehensiveItem, HotItem, HotPlatform } from '@shared/types';
 import { getCache, setCache } from '../utils/cache';
+import { fetchWeiboHot, type WeiboRawItem } from '../services/weibo';
 
 const { Segment, useDefault } = segmentit;
 const segmenter = useDefault(new Segment());
@@ -100,10 +101,39 @@ function buildComprehensive(limit: number): ComprehensiveItem[] {
   return scored.slice(0, limit).map((s) => s.item);
 }
 
+// 热度格式化：>=1e4 → x.x万，否则原样字符串
+function formatHeat(heat: number): string {
+  return heat >= 1e4 ? (heat / 1e4).toFixed(1) + '万' : String(heat);
+}
+
+// 微博原始条目 → HotItem[]（归一化，maxHeat 归一化到 0-100）
+function normalizeWeibo(raw: WeiboRawItem[], servedAt: string): HotItem[] {
+  const maxHeat = Math.max(...raw.map((r) => r.heat)) || 1;
+  return raw.map((r) => ({
+    id: `wb_${r.rank}`,
+    platform: 'weibo',
+    rank: r.rank,
+    title: r.title,
+    url: r.url,
+    hotValue: {
+      raw: r.heat,
+      display: formatHeat(r.heat),
+      normalized: Math.round((r.heat / maxHeat) * 100),
+    },
+    label: r.rank <= 3 ? '爆' : r.rank <= 10 ? '热' : null,
+    heatLevel: r.rank <= 3 ? 'explosive' : r.rank <= 10 ? 'hot' : 'normal',
+    categories: [],
+    primaryCategory: null,
+    isMock: false,
+    fetchedAt: servedAt,
+    updatedAt: servedAt,
+  }));
+}
+
 export const hot = new Hono();
 
-// 聚合接口：一次返回六大平台
-hot.get('/aggregate', (c) => {
+// 聚合接口：一次返回六大平台（weibo 接真实数据，其余 mock）
+hot.get('/aggregate', async (c) => {
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:aggregate';
 
@@ -124,19 +154,48 @@ hot.get('/aggregate', (c) => {
   }
 
   const servedAt = new Date().toISOString();
-  const data = Object.fromEntries(
-    MOCK_PLATFORMS.map((p) => [
-      p.platform,
-      {
-        ...p,
-        items: p.items.map((item) => ({
-          ...item,
-          updatedAt: servedAt,
-          fetchedAt: servedAt,
-        })),
-      },
-    ]),
+  let weiboLive = false;
+
+  const entries = await Promise.all(
+    MOCK_PLATFORMS.map(async (p): Promise<[string, HotPlatform]> => {
+      // 平台是 weibo：抓真实数据，失败回退 mock
+      if (p.platform === 'weibo') {
+        try {
+          const raw = await fetchWeiboHot();
+          const items = normalizeWeibo(raw, servedAt);
+          weiboLive = true;
+          return [
+            'weibo',
+            {
+              platform: 'weibo',
+              platformName: '微博',
+              status: 'ok',
+              isMock: false,
+              items,
+              error: null,
+            },
+          ];
+        } catch (err) {
+          console.error('[weibo] 聚合降级到 mock:', (err as Error).message);
+          // 落到下方 mock 回退
+        }
+      }
+      // 非 weibo，或 weibo 回退：用 mock 项并打戳
+      return [
+        p.platform,
+        {
+          ...p,
+          items: p.items.map((item) => ({
+            ...item,
+            updatedAt: servedAt,
+            fetchedAt: servedAt,
+          })),
+        },
+      ];
+    }),
   );
+
+  const data = Object.fromEntries(entries);
 
   setCache(cacheKey, data);
   console.log('[cache miss]', cacheKey);
@@ -144,7 +203,7 @@ hot.get('/aggregate', (c) => {
     success: true,
     data,
     meta: {
-      source: 'mock',
+      source: weiboLive ? 'mixed' : 'mock',
       cacheHit: false,
       servedAt,
     },
@@ -201,6 +260,65 @@ hot.get('/comprehensive', (c) => {
       servedAt,
     },
   });
+});
+
+// 微博真实热搜（替代 mock）
+hot.get('/weibo', async (c) => {
+  const refresh = c.req.query('refresh') === '1';
+  const cacheKey = 'hot:weibo';
+  if (!refresh) {
+    const cached = getCache<HotPlatform>(cacheKey);
+    if (cached) {
+      console.log('[cache hit]', cacheKey);
+      return c.json({
+        success: true,
+        data: { weibo: cached },
+        meta: {
+          source: 'live',
+          cacheHit: true,
+          servedAt: new Date().toISOString(),
+        },
+      });
+    }
+  }
+  const servedAt = new Date().toISOString();
+  try {
+    const raw = await fetchWeiboHot();
+    const items: HotItem[] = normalizeWeibo(raw, servedAt);
+    const platform: HotPlatform = {
+      platform: 'weibo',
+      platformName: '微博',
+      status: 'ok',
+      isMock: false,
+      items,
+      error: null,
+    };
+    setCache(cacheKey, platform);
+    console.log('[cache miss]', cacheKey);
+    return c.json({
+      success: true,
+      data: { weibo: platform },
+      meta: { source: 'live', cacheHit: false, servedAt },
+    });
+  } catch (err) {
+    // 失败态：degraded + 空列表 + 友好文案；不写缓存，下次请求立即重试
+    const msg = '微博热搜暂时获取失败，请稍后刷新';
+    console.error('[weibo] 降级:', (err as Error).message);
+    return c.json({
+      success: true,
+      data: {
+        weibo: {
+          platform: 'weibo',
+          platformName: '微博',
+          status: 'degraded',
+          isMock: false,
+          items: [],
+          error: msg,
+        },
+      },
+      meta: { source: 'live-fallback', cacheHit: false, servedAt },
+    });
+  }
 });
 
 // 单平台热榜

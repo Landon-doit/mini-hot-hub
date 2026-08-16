@@ -49,7 +49,7 @@ function Home() {
             : platforms.map((platform) => (
                 <div key={platform.platform} className={CARD_SHELL}>
                   <ErrorBoundary>
-                    <HotCard data={platform} cacheHit={cacheHit} />
+                    <HotCard data={platform} cacheHit={cacheHit} previewCount={5} />
                   </ErrorBoundary>
                 </div>
               ))}
