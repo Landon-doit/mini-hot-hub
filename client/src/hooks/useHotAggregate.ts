@@ -7,6 +7,7 @@ const AGGREGATE_STALE_MS = 5 * 60 * 1000;
 
 export interface UseHotAggregateResult {
   data: HotPlatform[] | undefined;
+  cacheHit: boolean;
   loading: boolean;
   fetching: boolean;
   refetch: () => void;
@@ -20,7 +21,8 @@ export function useHotAggregate(): UseHotAggregateResult {
   });
 
   return {
-    data,
+    data: data?.platforms,
+    cacheHit: data?.cacheHit ?? false,
     loading: isLoading,
     fetching: isFetching,
     refetch: () => {

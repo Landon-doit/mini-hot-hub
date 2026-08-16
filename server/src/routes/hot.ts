@@ -2,7 +2,8 @@ import { Hono } from 'hono';
 import { randomUUID } from 'node:crypto';
 import segmentit from 'segmentit';
 import { MOCK_PLATFORMS } from '@shared/mock-data';
-import type { ComprehensiveItem, HotItem } from '@shared/types';
+import type { ComprehensiveItem, HotItem, HotPlatform } from '@shared/types';
+import { getCache, setCache } from '../utils/cache';
 
 const { Segment, useDefault } = segmentit;
 const segmenter = useDefault(new Segment());
@@ -10,14 +11,6 @@ const segmenter = useDefault(new Segment());
 const JACCARD_THRESHOLD = 0.85;
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 50;
-
-function mockMeta() {
-  return {
-    source: 'mock',
-    cacheHit: false,
-    servedAt: new Date().toISOString(),
-  };
-}
 
 function errorBody(code: string, message: string, retryable: boolean) {
   return {
@@ -110,13 +103,53 @@ function buildComprehensive(limit: number): ComprehensiveItem[] {
 export const hot = new Hono();
 
 // 聚合接口：一次返回六大平台
-hot.get('/aggregate', (c) =>
-  c.json({
+hot.get('/aggregate', (c) => {
+  const refresh = c.req.query('refresh') === '1';
+  const cacheKey = 'hot:aggregate';
+
+  if (!refresh) {
+    const cached = getCache<Record<string, HotPlatform>>(cacheKey);
+    if (cached) {
+      console.log('[cache hit]', cacheKey);
+      return c.json({
+        success: true,
+        data: cached,
+        meta: {
+          source: 'mock',
+          cacheHit: true,
+          servedAt: new Date().toISOString(),
+        },
+      });
+    }
+  }
+
+  const servedAt = new Date().toISOString();
+  const data = Object.fromEntries(
+    MOCK_PLATFORMS.map((p) => [
+      p.platform,
+      {
+        ...p,
+        items: p.items.map((item) => ({
+          ...item,
+          updatedAt: servedAt,
+          fetchedAt: servedAt,
+        })),
+      },
+    ]),
+  );
+
+  setCache(cacheKey, data);
+  console.log('[cache miss]', cacheKey);
+  return c.json({
     success: true,
-    data: Object.fromEntries(MOCK_PLATFORMS.map((p) => [p.platform, p])),
-    meta: mockMeta(),
-  }),
-);
+    data,
+    meta: {
+      source: 'mock',
+      cacheHit: false,
+      servedAt,
+    },
+  });
+});
 
 // 跨平台综合热榜
 hot.get('/comprehensive', (c) => {
@@ -132,23 +165,91 @@ hot.get('/comprehensive', (c) => {
     }
     limit = parsed;
   }
+
+  const refresh = c.req.query('refresh') === '1';
+  const cacheKey = `hot:comprehensive:${limit}`;
+
+  if (!refresh) {
+    const cached = getCache<ComprehensiveItem[]>(cacheKey);
+    if (cached) {
+      console.log('[cache hit]', cacheKey);
+      return c.json({
+        success: true,
+        data: { items: cached },
+        meta: {
+          source: 'mock',
+          cacheHit: true,
+          servedAt: new Date().toISOString(),
+        },
+      });
+    }
+  }
+
+  const servedAt = new Date().toISOString();
+  const items = buildComprehensive(limit).map((it) => ({
+    ...it,
+    updatedAt: servedAt,
+  }));
+  setCache(cacheKey, items);
+  console.log('[cache miss]', cacheKey);
   return c.json({
     success: true,
-    data: { items: buildComprehensive(limit) },
-    meta: mockMeta(),
+    data: { items },
+    meta: {
+      source: 'mock',
+      cacheHit: false,
+      servedAt,
+    },
   });
 });
 
 // 单平台热榜
 hot.get('/:platform', (c) => {
   const platform = c.req.param('platform');
+  const refresh = c.req.query('refresh') === '1';
+  const cacheKey = `hot:${platform}`;
+
+  // 查缓存（refresh=1 强制跳过）
+  if (!refresh) {
+    const cached = getCache<HotPlatform>(cacheKey);
+    if (cached) {
+      console.log('[cache hit]', cacheKey);
+      return c.json({
+        success: true,
+        data: { [platform]: cached },
+        meta: {
+          source: 'mock',
+          cacheHit: true,
+          servedAt: new Date().toISOString(),
+        },
+      });
+    }
+  }
+
   const match = MOCK_PLATFORMS.find((p) => p.platform === platform);
   if (!match) {
     return c.json(errorBody('NOT_FOUND', '平台不存在', false), 404);
   }
+
+  // 命中 mock 后克隆并打戳、写缓存（refresh=1 也覆盖旧值，实现刷新）
+  const servedAt = new Date().toISOString();
+  const stamped: HotPlatform = {
+    ...match,
+    items: match.items.map((it) => ({
+      ...it,
+      updatedAt: servedAt,
+      fetchedAt: servedAt,
+    })),
+  };
+  setCache(cacheKey, stamped);
+  console.log('[cache miss]', cacheKey);
   return c.json({
     success: true,
-    data: { [match.platform]: match },
-    meta: mockMeta(),
+    data: { [match.platform]: stamped },
+    meta: {
+      source: 'mock',
+      cacheHit: false,
+      servedAt,
+    },
   });
 });

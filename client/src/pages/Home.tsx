@@ -11,7 +11,7 @@ import { BRAND } from '../constants/brand';
 const CARD_SHELL = 'snap-center shrink-0 w-[82%] md:w-auto md:shrink';
 
 function Home() {
-  const { data, loading, fetching, refetch } = useHotAggregate();
+  const { data, cacheHit, loading, fetching, refetch } = useHotAggregate();
   const platforms = data ?? [];
 
   return (
@@ -49,7 +49,7 @@ function Home() {
             : platforms.map((platform) => (
                 <div key={platform.platform} className={CARD_SHELL}>
                   <ErrorBoundary>
-                    <HotCard data={platform} />
+                    <HotCard data={platform} cacheHit={cacheHit} />
                   </ErrorBoundary>
                 </div>
               ))}
