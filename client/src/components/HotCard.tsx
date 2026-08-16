@@ -7,6 +7,7 @@ interface HotCardProps {
   error?: string | null;
   data?: HotPlatform;
   cacheHit?: boolean;
+  previewCount?: number;
   onRetry?: () => void;
 }
 
@@ -99,7 +100,7 @@ function HotCardEmpty() {
   );
 }
 
-function HotCard({ loading = false, error = null, data, onRetry, cacheHit }: HotCardProps) {
+function HotCard({ loading = false, error = null, data, onRetry, cacheHit, previewCount }: HotCardProps) {
   if (loading) {
     return <HotCardSkeleton />;
   }
@@ -114,6 +115,7 @@ function HotCard({ loading = false, error = null, data, onRetry, cacheHit }: Hot
   const updatedAt = latestUpdatedAt(data.items);
   const isEmpty = data.items.length === 0;
   const platformColor = PLATFORM_COLORS[data.platform] ?? '#888888';
+  const shownItems = previewCount ? data.items.slice(0, previewCount) : data.items;
 
   return (
     <article
@@ -135,7 +137,7 @@ function HotCard({ loading = false, error = null, data, onRetry, cacheHit }: Hot
         <HotCardEmpty />
       ) : (
         <ol className="m-0 flex-1 list-none space-y-1 p-0">
-          {data.items.map((item) => {
+          {shownItems.map((item) => {
             const label = heatLabel(item);
             const pct = Math.max(0, Math.min(100, item.hotValue.normalized));
             return (
@@ -184,7 +186,7 @@ function HotCard({ loading = false, error = null, data, onRetry, cacheHit }: Hot
         </ol>
       )}
 
-      {!isEmpty && (
+      {previewCount !== undefined && !isEmpty && (
         <footer className="mt-3 flex items-center justify-between gap-2 border-t border-gray-100 pt-2 text-xs dark:border-gray-800">
           <div className="min-w-0 text-gray-500 dark:text-gray-400">
             {updatedAt && (
