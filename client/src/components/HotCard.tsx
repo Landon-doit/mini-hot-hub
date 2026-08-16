@@ -6,6 +6,7 @@ interface HotCardProps {
   loading?: boolean;
   error?: string | null;
   data?: HotPlatform;
+  cacheHit?: boolean;
   onRetry?: () => void;
 }
 
@@ -98,7 +99,7 @@ function HotCardEmpty() {
   );
 }
 
-function HotCard({ loading = false, error = null, data, onRetry }: HotCardProps) {
+function HotCard({ loading = false, error = null, data, onRetry, cacheHit }: HotCardProps) {
   if (loading) {
     return <HotCardSkeleton />;
   }
@@ -187,7 +188,19 @@ function HotCard({ loading = false, error = null, data, onRetry }: HotCardProps)
         <footer className="mt-3 flex items-center justify-between gap-2 border-t border-gray-100 pt-2 text-xs dark:border-gray-800">
           <div className="min-w-0 text-gray-500 dark:text-gray-400">
             {updatedAt && (
-              <p className="m-0">{formatRelativeTime(updatedAt)}</p>
+              <p
+                className="m-0"
+                title={
+                  cacheHit
+                    ? '当前展示的是缓存快照，更新时间保持不变属正常现象'
+                    : '数据在缓存有效期内不会重新抓取，更新时间保持不变属正常现象'
+                }
+              >
+                更新于 {formatRelativeTime(updatedAt)}
+                {cacheHit && (
+                  <span className="ml-1 text-[#D4520A]">（缓存）</span>
+                )}
+              </p>
             )}
             {degraded && (
               <p role="alert" className="m-0">

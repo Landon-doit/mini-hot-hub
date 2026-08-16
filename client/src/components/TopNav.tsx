@@ -126,7 +126,7 @@ function TopNav({ refetch, loading }: TopNavProps) {
       <nav className="mx-auto flex max-w-[1200px] items-center gap-3 p-4" aria-label="主导航">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2">
-          <img src={BRAND.logo} alt="Timelune" width={36} height={36} className="rounded-md" />
+          <img src={BRAND.logo} alt="Timelune" width={44} height={44} className="shrink-0 rounded-md object-contain" />
           <div>
             <h1 className="m-0 text-2xl font-bold leading-none text-brand">{BRAND.name}</h1>
             <span className="text-xs tracking-wide text-muted">{BRAND.nameEn}</span>

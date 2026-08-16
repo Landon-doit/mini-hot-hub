@@ -6,20 +6,27 @@ const MOCK = MOCK_PLATFORMS;
 // dev 下 VITE_API_BASE 为空，走相对路径 + vite proxy；生产分域部署时填真实 API 域名
 const BASE = import.meta.env.VITE_API_BASE ?? '';
 
+export interface AggregateResult {
+  platforms: HotPlatform[];
+  cacheHit: boolean;
+}
+
 /**
  * 拉取六大平台聚合热榜（TCD §5.3.1 GET /api/hot/aggregate）。
  * 降级策略：后端不可用或异常时回退本地 Mock，保证开发/联调可用。
  */
-export async function fetchAllHot(): Promise<HotPlatform[]> {
+export async function fetchAllHot(): Promise<AggregateResult> {
   try {
     const res = await fetch(`${BASE}/api/hot/aggregate`);
     if (!res.ok) {
-      return MOCK;
+      return { platforms: MOCK, cacheHit: false };
     }
     const body = await res.json();
-    return Object.values(body.data ?? {}) as HotPlatform[];
+    const platforms = Object.values(body.data ?? {}) as HotPlatform[];
+    const cacheHit = Boolean(body?.meta?.cacheHit);
+    return { platforms, cacheHit };
   } catch {
-    return MOCK;
+    return { platforms: MOCK, cacheHit: false };
   }
 }
 
