@@ -1,21 +1,12 @@
 import { Link, useParams } from 'react-router-dom';
 import HotCard from '../components/HotCard';
 import { usePlatformDetail } from '../hooks/usePlatformDetail';
-import { PLATFORM_NAMES } from '@shared/constants';
+import { ALL_PLATFORMS, PLATFORM_NAMES } from '@shared/constants';
 import type { Platform } from '../types/hot';
-
-const VALID_PLATFORMS: Platform[] = [
-  'weibo',
-  'zhihu',
-  'bilibili',
-  'douyin',
-  'baidu',
-  'toutiao',
-];
 
 function PlatformDetail() {
   const { platform } = useParams<{ platform: string }>();
-  const valid = VALID_PLATFORMS.includes(platform as Platform)
+  const valid = ALL_PLATFORMS.includes(platform as Platform)
     ? (platform as Platform)
     : null;
 
