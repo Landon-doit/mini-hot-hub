@@ -41,6 +41,7 @@ export interface HotPlatform {
   isMock: boolean;
   items: HotItem[];
   error: string | null;
+  updatedAt: string;
 }
 
 // 跨平台综合热榜条目（TCD §3.1 / PRD 综合热榜接口）

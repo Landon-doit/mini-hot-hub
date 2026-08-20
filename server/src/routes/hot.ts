@@ -68,8 +68,11 @@ function cluster(items: HotItem[]): Cluster[] {
   return clusters;
 }
 
-function buildComprehensive(limit: number): ComprehensiveItem[] {
-  const allItems = MOCK_PLATFORMS.flatMap((p) => p.items);
+async function buildComprehensive(
+  limit: number,
+  data: Record<Platform, HotPlatform>,
+): Promise<ComprehensiveItem[]> {
+  const allItems = Object.values(data).flatMap((p) => p.items);
   const scored = cluster(allItems).map((c) => {
     const sorted = [...c.items].sort(
       (a, b) => b.hotValue.normalized - a.hotValue.normalized,
@@ -96,7 +99,7 @@ function buildComprehensive(limit: number): ComprehensiveItem[] {
       categories: [...new Set(c.items.flatMap((i) => i.categories))],
       primaryCategory: top.primaryCategory,
       url: top.url,
-      isMock: top.isMock,
+      isMock: c.items.every((i) => i.isMock),
       updatedAt: top.updatedAt,
     };
 
@@ -256,34 +259,14 @@ function normalizeDouyin(raw: DouyinRawItem[], servedAt: string): HotItem[] {
   }));
 }
 
-export const hot = new Hono();
-
-// 聚合接口：一次返回六大平台（六平台均接真实数据，失败回退 mock）
-hot.get('/aggregate', async (c) => {
-  const refresh = c.req.query('refresh') === '1';
-  const cacheKey = 'hot:aggregate';
-
-  if (!refresh) {
-    const cached = getCache<Record<string, HotPlatform>>(cacheKey);
-    if (cached) {
-      console.log('[cache hit]', cacheKey);
-      return c.json({
-        success: true,
-        data: cached,
-        meta: {
-          source: 'mock',
-          cacheHit: true,
-          servedAt: new Date().toISOString(),
-        },
-      });
-    }
-  }
-
-  const servedAt = new Date().toISOString();
+// 抓取六大平台真实数据（失败回退 mock），返回聚合结果与是否有真实数据
+async function fetchAllPlatforms(
+  servedAt: string,
+): Promise<{ data: Record<Platform, HotPlatform>; anyLive: boolean }> {
   let anyLive = false;
 
   const entries = await Promise.all(
-    MOCK_PLATFORMS.map(async (p): Promise<[string, HotPlatform]> => {
+    MOCK_PLATFORMS.map(async (p): Promise<[Platform, HotPlatform]> => {
       // 平台是 weibo：抓真实数据，失败回退 mock
       if (p.platform === 'weibo') {
         try {
@@ -299,11 +282,11 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[weibo] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
       // 平台是 zhihu：抓真实数据，失败回退 mock
@@ -321,11 +304,11 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[zhihu] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
       // 平台是 baidu：抓真实数据，失败回退 mock
@@ -343,11 +326,11 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[baidu] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
       // 平台是 toutiao：抓真实数据，失败回退 mock
@@ -365,11 +348,11 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[toutiao] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
       // 平台是 bilibili：抓真实数据，失败回退 mock
@@ -387,11 +370,11 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[bilibili] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
       // 平台是 douyin：抓真实数据，失败回退 mock
@@ -409,18 +392,19 @@ hot.get('/aggregate', async (c) => {
               isMock: false,
               items,
               error: null,
+              updatedAt: servedAt,
             },
           ];
         } catch (err) {
           console.error('[douyin] 聚合降级到 mock:', (err as Error).message);
-          // 落到下方 mock 回退
         }
       }
-      // 非 weibo/zhihu/baidu/toutiao/bilibili/douyin，或回退：用 mock 项并打戳
+      // 回退：用 mock 项并打戳
       return [
         p.platform,
         {
           ...p,
+          updatedAt: servedAt,
           items: p.items.map((item) => ({
             ...item,
             updatedAt: servedAt,
@@ -431,7 +415,38 @@ hot.get('/aggregate', async (c) => {
     }),
   );
 
-  const data = Object.fromEntries(entries);
+  const data = Object.fromEntries(entries) as Record<Platform, HotPlatform>;
+  return { data, anyLive };
+}
+
+export const hot = new Hono();
+
+// 聚合接口：一次返回六大平台（六平台均接真实数据，失败回退 mock）
+hot.get('/aggregate', async (c) => {
+  const refresh = c.req.query('refresh') === '1';
+  const cacheKey = 'hot:aggregate';
+
+  if (!refresh) {
+    const cached = getCache<Record<string, HotPlatform>>(cacheKey);
+    if (cached) {
+      console.log('[cache hit]', cacheKey);
+      const source = Object.values(cached).some((platform) => !platform.isMock)
+        ? 'mixed'
+        : 'mock';
+      return c.json({
+        success: true,
+        data: cached,
+        meta: {
+          source,
+          cacheHit: true,
+          servedAt: new Date().toISOString(),
+        },
+      });
+    }
+  }
+
+  const servedAt = new Date().toISOString();
+  const { data, anyLive } = await fetchAllPlatforms(servedAt);
 
   setCache(cacheKey, data);
   console.log('[cache miss]', cacheKey);
@@ -446,8 +461,8 @@ hot.get('/aggregate', async (c) => {
   });
 });
 
-// 跨平台综合热榜
-hot.get('/comprehensive', (c) => {
+// 跨平台综合热榜（复用真实聚合，一次 fetch）
+hot.get('/comprehensive', async (c) => {
   const limitParam = c.req.query('limit');
   let limit = DEFAULT_LIMIT;
   if (limitParam !== undefined) {
@@ -465,14 +480,16 @@ hot.get('/comprehensive', (c) => {
   const cacheKey = `hot:comprehensive:${limit}`;
 
   if (!refresh) {
-    const cached = getCache<ComprehensiveItem[]>(cacheKey);
+    const cached = getCache<{ items: ComprehensiveItem[]; source: string }>(
+      cacheKey,
+    );
     if (cached) {
       console.log('[cache hit]', cacheKey);
       return c.json({
         success: true,
-        data: { items: cached },
+        data: { items: cached.items },
         meta: {
-          source: 'mock',
+          source: cached.source,
           cacheHit: true,
           servedAt: new Date().toISOString(),
         },
@@ -481,20 +498,18 @@ hot.get('/comprehensive', (c) => {
   }
 
   const servedAt = new Date().toISOString();
-  const items = buildComprehensive(limit).map((it) => ({
+  const { data, anyLive } = await fetchAllPlatforms(servedAt);
+  const items = (await buildComprehensive(limit, data)).map((it) => ({
     ...it,
     updatedAt: servedAt,
   }));
-  setCache(cacheKey, items);
+  const source = anyLive ? 'mixed' : 'mock';
+  setCache(cacheKey, { items, source });
   console.log('[cache miss]', cacheKey);
   return c.json({
     success: true,
     data: { items },
-    meta: {
-      source: 'mock',
-      cacheHit: false,
-      servedAt,
-    },
+    meta: { source, cacheHit: false, servedAt },
   });
 });
 
@@ -528,6 +543,7 @@ hot.get('/weibo', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -550,6 +566,7 @@ hot.get('/weibo', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -587,6 +604,7 @@ hot.get('/zhihu', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -609,6 +627,7 @@ hot.get('/zhihu', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -646,6 +665,7 @@ hot.get('/baidu', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -668,6 +688,7 @@ hot.get('/baidu', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -705,6 +726,7 @@ hot.get('/toutiao', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -727,6 +749,7 @@ hot.get('/toutiao', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -764,6 +787,7 @@ hot.get('/bilibili', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -786,6 +810,7 @@ hot.get('/bilibili', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -823,6 +848,7 @@ hot.get('/douyin', async (c) => {
       isMock: false,
       items,
       error: null,
+      updatedAt: servedAt,
     };
     setCache(cacheKey, platform);
     console.log('[cache miss]', cacheKey);
@@ -845,6 +871,7 @@ hot.get('/douyin', async (c) => {
           isMock: false,
           items: [],
           error: msg,
+          updatedAt: servedAt,
         },
       },
       meta: { source: 'live-fallback', cacheHit: false, servedAt },
@@ -887,6 +914,7 @@ hot.get('/:platform', (c) => {
   const servedAt = new Date().toISOString();
   const stamped: HotPlatform = {
     ...match,
+    updatedAt: servedAt,
     items: match.items.map((it) => ({
       ...it,
       updatedAt: servedAt,

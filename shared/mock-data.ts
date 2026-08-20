@@ -8,6 +8,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "微博",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "wb_1",
@@ -227,6 +228,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "知乎",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "zh_1",
@@ -446,6 +448,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "B站",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "bili_1",
@@ -665,6 +668,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "抖音",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "dy_1",
@@ -884,6 +888,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "百度",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "bd_1",
@@ -1103,6 +1108,7 @@ export const MOCK_PLATFORMS: HotPlatform[] = [
     "platformName": "今日头条",
     "status": "degraded",
     "isMock": true,
+    "updatedAt": "2026-08-13T08:00:01Z",
     "items": [
       {
         "id": "tt_1",
