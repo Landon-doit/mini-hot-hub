@@ -1,5 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react';
 import ThemeToggle from './ThemeToggle';
+import SearchBar from './SearchBar';
 import { BRAND } from '../constants/brand';
 
 interface TopNavProps {
@@ -68,40 +69,7 @@ function CloseGlyph() {
 const ICON_BTN =
   'inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-border bg-card text-muted transition-colors hover:border-brand hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
 
-function SearchBox({
-  value,
-  onChange,
-  autoFocus,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  autoFocus?: boolean;
-}) {
-  return (
-    <form
-      role="search"
-      aria-label="搜索热搜"
-      onSubmit={(e) => e.preventDefault()}
-      className="relative flex items-center"
-    >
-      <span className="pointer-events-none absolute left-3 text-muted">
-        <SearchGlyph />
-      </span>
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="搜索热搜…"
-        aria-label="搜索关键词"
-        autoFocus={autoFocus}
-        className="h-11 w-full rounded-full border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-      />
-    </form>
-  );
-}
-
 function TopNav({ refetch, loading }: TopNavProps) {
-  const [query, setQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [spinning, setSpinning] = useState(false);
@@ -135,7 +103,7 @@ function TopNav({ refetch, loading }: TopNavProps) {
 
         {/* 桌面搜索框 */}
         <div className="hidden flex-1 md:block">
-          <SearchBox value={query} onChange={setQuery} />
+          <SearchBar />
         </div>
 
         {/* 桌面右侧操作区 */}
@@ -219,7 +187,7 @@ function TopNav({ refetch, loading }: TopNavProps) {
       {searchOpen && (
         <div className="fixed inset-0 z-50 flex items-start bg-background p-4 md:hidden">
           <div className="flex flex-1 items-center gap-2">
-            <SearchBox value={query} onChange={setQuery} autoFocus />
+            <SearchBar autoFocus onSubmitSearch={() => setSearchOpen(false)} />
             <button type="button" onClick={() => setSearchOpen(false)} aria-label="关闭搜索" className={ICON_BTN}>
               <CloseGlyph />
             </button>

@@ -29,3 +29,6 @@ export const ALL_PLATFORMS: Platform[] = [
   'baidu',
   'toutiao',
 ];
+
+export const CACHE_TTL_SECONDS = 600;
+export const CONTACT_EMAIL = 'contact@timelune.app';

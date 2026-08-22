@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import HotCard from '../components/HotCard';
+import SiteFooter from '../components/SiteFooter';
 import { usePlatformDetail } from '../hooks/usePlatformDetail';
 import { ALL_PLATFORMS, PLATFORM_NAMES } from '@shared/constants';
 import type { Platform } from '../types/hot';
@@ -49,10 +50,11 @@ function PlatformDetailContent({ platform }: { platform: Platform }) {
           onRetry={() => void refetch()}
         />
       ) : data ? (
-        <HotCard data={data} />
+        <HotCard data={data} onRetry={() => void refetch()} />
       ) : (
         <HotCard error="该内容暂时无法加载" onRetry={() => void refetch()} />
       )}
+      <SiteFooter />
     </div>
   );
 }

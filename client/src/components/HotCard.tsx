@@ -110,6 +110,9 @@ function HotCard({ loading = false, error = null, data, onRetry, cacheHit, previ
   if (!data) {
     return <HotCardError message="该内容暂时无法加载" onRetry={onRetry} />;
   }
+  if (data.status === 'error') {
+    return <HotCardError message={data.error ?? '加载失败'} onRetry={onRetry} />;
+  }
 
   const degraded = data.status === 'degraded';
   const updatedAt = latestUpdatedAt(data.items);

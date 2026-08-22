@@ -1,9 +1,11 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import PlatformDetail from './pages/PlatformDetail';
 import { themeAtom, applyTheme } from './store/theme';
+
+const SearchResults = lazy(() => import('./pages/SearchResults'));
 
 function App() {
   const theme = useAtomValue(themeAtom);
@@ -25,6 +27,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/platform/:platform" element={<PlatformDetail />} />
+        <Route
+          path="/search"
+          element={
+            <Suspense fallback={<div>加载中...</div>}>
+              <SearchResults />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<Home />} />
       </Routes>
     </BrowserRouter>

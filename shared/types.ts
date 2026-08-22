@@ -37,7 +37,7 @@ export interface HotItem {
 export interface HotPlatform {
   platform: Platform;
   platformName: string;
-  status: 'ok' | 'degraded';
+  status: 'ok' | 'degraded' | 'error';
   isMock: boolean;
   items: HotItem[];
   error: string | null;
@@ -59,4 +59,39 @@ export interface ComprehensiveItem {
   url: string;
   isMock: boolean;
   updatedAt: string;
+}
+
+// 搜索结果条目（M2 搜索与组合筛选，对齐 PRD §模块二）
+export interface SearchResult {
+  id: string;
+  title: string;
+  url: string;
+  platform: Platform;
+  platformName: string;
+  heat: number;
+  category?: string;
+  isMock: boolean;
+  score?: number;
+  updatedAt?: string;
+}
+
+// 搜索历史（游客 localStorage ≤10；登录用户服务端 ≤50）
+export interface SearchHistoryItem {
+  keyword: string;
+  createdAt: string;
+}
+
+// 服务端 /api/search 响应包络（对齐 TECH_DESIGN §5.2）
+export interface SearchResponse {
+  success: boolean;
+  data: {
+    items: SearchResult[];
+    total: number;
+  };
+  meta: {
+    source: 'client' | 'server' | 'fallback';
+    searchTime: number;
+    cacheHit: boolean;
+    servedAt: string;
+  };
 }

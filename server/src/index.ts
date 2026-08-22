@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { hot } from './routes/hot';
+import { searchRoute } from './routes/search';
 
 const app = new Hono();
 const PORT = Number(process.env.PORT) || 3000;
@@ -49,6 +50,7 @@ app.get('/api/health', (c) =>
 );
 
 app.route('/api/hot', hot);
+app.route('/api/search', searchRoute);
 
 serve({ fetch: app.fetch, port: PORT }, () => {
   console.log(`Server running at http://localhost:${PORT}`);

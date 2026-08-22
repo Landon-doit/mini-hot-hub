@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import ParticleBg from '../components/ParticleBg';
 import TopNav from '../components/TopNav';
 import DailyQuote from '../components/DailyQuote';
@@ -5,14 +6,37 @@ import RecommendZone from '../components/RecommendZone';
 import ComprehensiveBoard from '../components/ComprehensiveBoard';
 import HotCard from '../components/HotCard';
 import ErrorBoundary from '../components/ErrorBoundary';
+import SiteFooter from '../components/SiteFooter';
+import { fetchHotPlatform } from '../api/hot';
 import { useHotAggregate } from '../hooks/useHotAggregate';
-import { BRAND } from '../constants/brand';
+import type { HotPlatform, Platform } from '../types/hot';
 
 const CARD_SHELL = 'snap-center shrink-0 w-[82%] md:w-auto md:shrink';
 
 function Home() {
   const { data, cacheHit, loading, fetching, refetch } = useHotAggregate();
+  const [overrides, setOverrides] = useState<Record<string, HotPlatform>>({});
+  const [retrying, setRetrying] = useState<Set<string>>(new Set());
   const platforms = data ?? [];
+
+  const retryPlatform = async (platform: Platform) => {
+    setRetrying((current) => new Set(current).add(platform));
+    try {
+      const next = await fetchHotPlatform(platform);
+      setOverrides((current) => ({ ...current, [platform]: next }));
+    } finally {
+      setRetrying((current) => {
+        const next = new Set(current);
+        next.delete(platform);
+        return next;
+      });
+    }
+  };
+
+  const handleRefresh = () => {
+    setOverrides({});
+    void refetch();
+  };
 
   return (
     <>
@@ -20,7 +44,7 @@ function Home() {
       <ParticleBg />
 
       {/* ② 顶部导航 */}
-      <TopNav refetch={refetch} loading={fetching} />
+      <TopNav refetch={handleRefresh} loading={fetching} />
 
       {/* ③ 每日一句 */}
       <DailyQuote />
@@ -46,22 +70,26 @@ function Home() {
                   <HotCard loading />
                 </div>
               ))
-            : platforms.map((platform) => (
-                <div key={platform.platform} className={CARD_SHELL}>
-                  <ErrorBoundary>
-                    <HotCard data={platform} cacheHit={cacheHit} previewCount={5} />
-                  </ErrorBoundary>
-                </div>
-              ))}
+            : platforms.map((platform) => {
+                const card = overrides[platform.platform] ?? platform;
+                return (
+                  <div key={platform.platform} className={CARD_SHELL}>
+                    <ErrorBoundary>
+                      <HotCard
+                        data={card}
+                        cacheHit={cacheHit}
+                        previewCount={5}
+                        loading={retrying.has(card.platform)}
+                        onRetry={() => void retryPlatform(card.platform)}
+                      />
+                    </ErrorBoundary>
+                  </div>
+                );
+              })}
         </section>
       </main>
 
-      {/* ⑦ 页脚 */}
-      <footer className="mt-8 border-t border-gray-200 pt-4 text-center text-xs leading-6 text-gray-400 dark:border-gray-800 dark:text-gray-500">
-        <p className="m-0">{BRAND.name} {BRAND.nameEn} © 2026 | 学习项目，非商用</p>
-        <p className="m-0">数据来源：微博 · 知乎 · B站 · 抖音 · 百度 · 今日头条</p>
-        <p className="m-0">数据仅供参考，版权归原作者所有</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

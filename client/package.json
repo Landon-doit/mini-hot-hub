@@ -14,9 +14,11 @@
     "@tsparticles/react": "^4.3.2",
     "@tsparticles/slim": "^4.3.2",
     "jotai": "^2.20.2",
+    "minisearch": "^7.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.18.2"
+    "react-router-dom": "^7.18.2",
+    "segmentit": "^2.0.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

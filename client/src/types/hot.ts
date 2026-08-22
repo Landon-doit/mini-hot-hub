@@ -6,4 +6,7 @@ export type {
   HotItem,
   HotPlatform,
   ComprehensiveItem,
+  SearchResult,
+  SearchHistoryItem,
+  SearchResponse,
 } from '@shared/types';

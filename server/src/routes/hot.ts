@@ -12,6 +12,37 @@ import { fetchToutiaoHot, type ToutiaoRawItem } from '../services/toutiao';
 import { fetchBilibiliHot, type BilibiliRawItem } from '../services/bilibili';
 import { fetchDouyinHot, type DouyinRawItem } from '../services/douyin';
 
+function shouldSimulateFailure(platform: Platform): boolean {
+  return (
+    process.env.MOCK_FAIL_ALL === '1' ||
+    process.env[`MOCK_FAIL_${platform.toUpperCase()}`] === '1'
+  );
+}
+
+function createSimulatedFailure(
+  platform: Platform,
+  servedAt: string,
+  platformName = MOCK_PLATFORMS.find((candidate) => candidate.platform === platform)?.platformName ?? platform,
+): HotPlatform {
+  return {
+    platform,
+    platformName,
+    status: 'error',
+    isMock: false,
+    items: [],
+    error: `[dev] 已模拟 ${platformName} 上游故障（设置 MOCK_FAIL_${platform.toUpperCase()}=1）`,
+    updatedAt: servedAt,
+  };
+}
+
+function simulatedFailureResponse(platform: Platform, servedAt: string) {
+  return {
+    success: true,
+    data: { [platform]: createSimulatedFailure(platform, servedAt) },
+    meta: { source: 'dev-failure', cacheHit: false, servedAt },
+  };
+}
+
 const { Segment, useDefault } = segmentit;
 const segmenter = useDefault(new Segment());
 
@@ -260,13 +291,17 @@ function normalizeDouyin(raw: DouyinRawItem[], servedAt: string): HotItem[] {
 }
 
 // 抓取六大平台真实数据（失败回退 mock），返回聚合结果与是否有真实数据
-async function fetchAllPlatforms(
+export async function fetchAllPlatforms(
   servedAt: string,
 ): Promise<{ data: Record<Platform, HotPlatform>; anyLive: boolean }> {
   let anyLive = false;
 
   const entries = await Promise.all(
     MOCK_PLATFORMS.map(async (p): Promise<[Platform, HotPlatform]> => {
+      if (shouldSimulateFailure(p.platform)) {
+        return [p.platform, createSimulatedFailure(p.platform, servedAt, p.platformName)];
+      }
+
       // 平台是 weibo：抓真实数据，失败回退 mock
       if (p.platform === 'weibo') {
         try {
@@ -515,6 +550,12 @@ hot.get('/comprehensive', async (c) => {
 
 // 微博真实热搜（替代 mock）
 hot.get('/weibo', async (c) => {
+  const platform = 'weibo' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:weibo';
   if (!refresh) {
@@ -532,7 +573,6 @@ hot.get('/weibo', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchWeiboHot();
     const items: HotItem[] = normalizeWeibo(raw, servedAt);
@@ -576,6 +616,12 @@ hot.get('/weibo', async (c) => {
 
 // 知乎真实热搜（替代 mock）
 hot.get('/zhihu', async (c) => {
+  const platform = 'zhihu' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:zhihu';
   if (!refresh) {
@@ -593,7 +639,6 @@ hot.get('/zhihu', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchZhihuHot();
     const items: HotItem[] = normalizeZhihu(raw, servedAt);
@@ -637,6 +682,12 @@ hot.get('/zhihu', async (c) => {
 
 // 百度真实热搜（替代 mock）
 hot.get('/baidu', async (c) => {
+  const platform = 'baidu' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:baidu';
   if (!refresh) {
@@ -654,7 +705,6 @@ hot.get('/baidu', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchBaiduHot();
     const items: HotItem[] = normalizeBaidu(raw, servedAt);
@@ -698,6 +748,12 @@ hot.get('/baidu', async (c) => {
 
 // 今日头条真实热搜（替代 mock）
 hot.get('/toutiao', async (c) => {
+  const platform = 'toutiao' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:toutiao';
   if (!refresh) {
@@ -715,7 +771,6 @@ hot.get('/toutiao', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchToutiaoHot();
     const items: HotItem[] = normalizeToutiao(raw, servedAt);
@@ -759,6 +814,12 @@ hot.get('/toutiao', async (c) => {
 
 // B站真实热搜（替代 mock）
 hot.get('/bilibili', async (c) => {
+  const platform = 'bilibili' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:bilibili';
   if (!refresh) {
@@ -776,7 +837,6 @@ hot.get('/bilibili', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchBilibiliHot();
     const items: HotItem[] = normalizeBilibili(raw, servedAt);
@@ -820,6 +880,12 @@ hot.get('/bilibili', async (c) => {
 
 // 抖音真实热搜（替代 mock）
 hot.get('/douyin', async (c) => {
+  const platform = 'douyin' as const;
+  const servedAt = new Date().toISOString();
+  if (shouldSimulateFailure(platform)) {
+    return c.json(simulatedFailureResponse(platform, servedAt));
+  }
+
   const refresh = c.req.query('refresh') === '1';
   const cacheKey = 'hot:douyin';
   if (!refresh) {
@@ -837,7 +903,6 @@ hot.get('/douyin', async (c) => {
       });
     }
   }
-  const servedAt = new Date().toISOString();
   try {
     const raw = await fetchDouyinHot();
     const items: HotItem[] = normalizeDouyin(raw, servedAt);
